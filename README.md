@@ -1,6 +1,6 @@
-<<<<<<< HEAD
+
 # XecureIT-Skill-test
-=======
+
 # AI Document Processing & Security Service
 
 Submission tes Software Engineer (AI/ML Focus) — Surya Ramadhani.
@@ -69,4 +69,3 @@ Smoke test menguji autentikasi, validasi MIME dan ukuran, OCR PDF, redaksi, peng
 - Kategori ditentukan dengan kata kunci. Confidence PII merupakan skor heuristik. Deteksi nama berfokus pada label seperti `Nama:`, dan nomor kartu menggunakan Luhn. Hasil OCR, variasi format, dan nama dalam narasi bisa menyebabkan temuan terlewat. Gunakan hanya dokumen sintetis pada demo.
 - Pengguna demo tunggal menggunakan JWT HS256. Pembatasan laju dan pemeriksaan kepemilikan berlaku pada endpoint dokumen. API dipublikasikan ke loopback, Redis dan PostgreSQL tetap di jaringan internal Compose. Soft delete mempertahankan file terenkripsi serta audit untuk retensi demo.
 - Deploy ini memakai satu host. Status di PostgreSQL dan antrean Redis bisa berbeda jika proses atau salah satu datastore berhenti di tengah penulisan. Untuk deployment produksi, gunakan transactional outbox dan proses rekonsiliasi untuk job yang tertunda dan pengiriman DLQ. Ganti akun demo dengan identitas organisasi, gunakan TLS, pengelolaan kunci dan rotasi, retensi/purge otomatis, serta isolasi parser lebih ketat.
->>>>>>> ab9c31c (Inital Comit)
