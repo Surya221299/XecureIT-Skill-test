@@ -1,11 +1,8 @@
-
-# XecureIT-Skill-test
-
 # AI Document Processing & Security Service
 
 Submission tes Software Engineer (AI/ML Focus) — Surya Ramadhani.
 
-FastAPI menerima PDF, PNG, dan JPG. RQ memakai Redis untuk menjalankan OCR Tesseract lokal, redaksi PII, klasifikasi, dan penyimpanan hasil ke PostgreSQL. PostgreSQL menyediakan pencarian full-text, audit, dan laporan risiko.
+FastAPI menerima PDF, PNG, dan JPG. RQ memakai Redis untuk menjalankan OCR Tesseract local, redaksi PII, klasifikasi, dan penyimpanan hasil ke PostgreSQL. PostgreSQL menyediakan search full-text, audit, dan risk level.
 
 ## Instalasi dan menjalankan aplikasi
 
@@ -27,7 +24,7 @@ py -3 setup_demo.py
 docker compose up --build -d --wait
 ```
 
-Skrip setup membuat `.env` jika belum ada. File tersebut berisi password demo, kunci JWT, dan kunci enkripsi. Simpan file ini secara lokal dan jangan commit ke Git. Pertahankan `FILE_KEY` selama masih menggunakan volume dokumen yang sama.
+Skrip setup membuat `.env` jika belum ada. File tersebut berisi password demo, JWT auth, dan encription key. Simpan file ini secara lokal dan jangan commit ke Git. Pertahankan `FILE_KEY` selama masih menggunakan volume dokumen yang sama.
 
 Buka [Swagger UI](http://localhost:8000/docs). Klik **Authorize**, masukkan username `demo` dan nilai `DEMO_PASSWORD` dari `.env`, lalu klik **Authorize → Close**. Biarkan `client_id` dan `client_secret` kosong. Token berlaku 60 menit sejak diterbitkan.
 
@@ -41,7 +38,7 @@ Di PowerShell, jalankan `$env:API_PORT = '8001'` sebelum perintah Compose. Untuk
 
 ## Demo dengan Swagger
 
-1. Upload [invoice sintetis](examples/invoice.pdf) melalui `POST /api/documents/upload`. Salin ID dari respons.
+1. Upload [invoice sintetis](examples/invoice.pdf) melalui `POST /api/documents/upload`. Salin ID dari respon di swagger.
 2. Jalankan `POST /api/documents/analyze/{id}`. Respons 202 menunjukkan analisis diproses asinkron. Panggilan ulang mengembalikan job yang sama.
 3. Panggil `GET /api/documents/{id}` sampai status `completed`. Contoh ini diharapkan berjenis `financial`, berisiko `high`, dan teks memuat `[NIK]` serta `[EMAIL]`.
 4. Cari `q=invoice&risk=high` lewat `GET /api/documents/search`, lalu cek `GET /api/documents/risk-report`.
