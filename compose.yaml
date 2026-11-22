@@ -1,0 +1,67 @@
+x-app: &app
+  build: .
+  read_only: true
+  tmpfs:
+    - /tmp:size=128m,mode=1777
+  cap_drop: [ALL]
+  security_opt: ["no-new-privileges:true"]
+  pids_limit: 64
+  environment:
+    DATABASE_URL: postgresql://documents:documents@db/documents
+    REDIS_URL: redis://redis:6379/0
+    STORAGE_DIR: /private-documents
+    JWT_SECRET: ${JWT_SECRET:?Generate .env first}
+    FILE_KEY: ${FILE_KEY:?Generate .env first}
+    DEMO_PASSWORD: ${DEMO_PASSWORD:?Generate .env first}
+  volumes:
+    - files:/private-documents
+  depends_on:
+    db:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: documents
+      POSTGRES_USER: documents
+      POSTGRES_PASSWORD: documents
+    volumes:
+      - pg:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql:ro
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -h 127.0.0.1 -U documents -d documents"]
+      interval: 3s
+      timeout: 2s
+      retries: 20
+  redis:
+    image: redis:7-alpine
+    command: [redis-server, --appendonly, "yes"]
+    volumes:
+      - queue:/data
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 3s
+      timeout: 2s
+      retries: 20
+  api:
+    <<: *app
+    command: [uvicorn, api:app, --host, 0.0.0.0, --port, "8000"]
+    ports:
+      - "127.0.0.1:${API_PORT:-8000}:8000"
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/openapi.json', timeout=2).close()"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  worker:
+    <<: *app
+    command: [python, -m, worker]
+    init: true
+    cpus: 2
+    mem_limit: 768m
+volumes:
+  pg:
+  queue:
+  files:

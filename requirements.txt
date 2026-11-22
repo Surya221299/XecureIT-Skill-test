@@ -1,0 +1,9 @@
+fastapi==0.165.0
+uvicorn==0.34.3
+python-multipart==0.0.34
+psycopg[binary]==3.2.9
+redis==5.2.1
+rq==2.3.3
+cryptography==45.0.4
+PyJWT==2.15.1
+Pillow==13.0.0
